@@ -15,28 +15,40 @@ namespace CBS._011
         internal ThreadWithResult(Func<T> threadStart)
         {
             _threadStart = threadStart;
-            IsCompleted = false;
+            _isCompleted = null;
             Success = false;
         }
 
-        private const string ERROR_MESSAGE_NO_RESULT = "The thread have not received a result yet";
 
         private readonly Func<T> _threadStart;
         private T _result;
+        private bool? _isCompleted;
 
-        public bool IsCompleted { get; private set; }
+        /// <summary>
+        /// false: is running,
+        /// true: is completed,
+        /// null: has not started yet;
+        /// </summary>
+        public bool IsCompleted
+        {
+            get => _isCompleted ?? false;
+            private set => _isCompleted = value;
+        }
+
         public bool Success { get; private set; }
 
         public T Result
         {
-            get => Success && IsCompleted ? _result : throw new Exception(ERROR_MESSAGE_NO_RESULT);
+            get => Success && IsCompleted ? _result : throw new Exception("The thread has not received a result yet");
             private set => _result = value;
         }
 
         public void Start()
         {
+            IsCompleted = false;
             try
             {
+                Success = false;
                 Result = _threadStart();
                 Success = true;
             }
