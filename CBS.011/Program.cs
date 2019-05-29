@@ -12,7 +12,7 @@ namespace CBS._011
     //- IsCompleted // Операция завершена или нет
     //- Success // Операция завершена успешно или нет
     //- Result // Результат операции
-    //- Start() // Запуск операции
+    //- ThreadStart() // Запуск операции
 
     //- Операцию для выполнения передавать в конструктор с помощью делегата
     //- Класс должен быть generic.Generic-параметр указывает тип результата операции.
@@ -28,11 +28,17 @@ namespace CBS._011
     {
         static void Main(string[] args)
         {
-            var thread = ThreadWithResult.Create(() => 10);
+            var thread = ThreadWithResult.Create(() =>
+            {
+                Thread.Sleep(100);
+                //throw new Exception();
+                return 10;
+            });
 
             Console.WriteLine(thread);
 
-            new Thread(thread.Start).Start();
+            thread.Start();
+            //thread.Start();
 
             Console.WriteLine(thread);
 

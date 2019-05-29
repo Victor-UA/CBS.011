@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace CBS._011
 {
@@ -17,23 +11,21 @@ namespace CBS._011
             _threadStart = threadStart;
             _isCompleted = null;
             Success = false;
+            _thread = new Thread(ThreadStart);
         }
 
+        private readonly Thread _thread = null;
 
         private readonly Func<T> _threadStart;
         private T _result;
         private bool? _isCompleted;
 
-        /// <summary>
-        /// false: is running,
-        /// true: is completed,
-        /// null: has not started yet;
-        /// </summary>
         public bool IsCompleted
         {
             get => _isCompleted ?? false;
             private set => _isCompleted = value;
         }
+
 
         public bool Success { get; private set; }
 
@@ -45,18 +37,27 @@ namespace CBS._011
 
         public void Start()
         {
+            _thread.Start();
+        }
+
+        private void ThreadStart()
+        {
             IsCompleted = false;
+            Success = false;
             try
             {
-                Success = false;
                 Result = _threadStart();
                 Success = true;
             }
-            catch (Exception ex)
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine($"Error: {ex.Message}");
+            //}
+            finally
             {
-                Console.WriteLine($"Error: {ex.Message}");         
+                IsCompleted = true;
             }
-            IsCompleted = true;
+
         }
 
         public override string ToString()
@@ -69,9 +70,10 @@ namespace CBS._011
             catch (Exception e)
             {
                 result = e.Message;
-            }            
+            }
+
             return $"IsCompleted: {IsCompleted}, Success: {Success}, Result: {result}";
-        }
+        }        
     }
 
 
@@ -82,5 +84,6 @@ namespace CBS._011
             return new ThreadWithResult<T>(threadStart);
         }
     }
+
 }
 
