@@ -62,7 +62,7 @@ namespace CBS._011
 
         public override string ToString()
         {
-            string result = "";
+            var result = "";
             try
             {
                 result = Result.ToString();
