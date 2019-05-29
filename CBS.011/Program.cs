@@ -31,7 +31,7 @@ namespace CBS._011
             var thread = ThreadWithResult.Create(() =>
             {
                 Thread.Sleep(100);
-                //throw new Exception();
+                //throw new Exception("Test exception");
                 return 10;
             });
 
@@ -47,7 +47,11 @@ namespace CBS._011
                 Thread.Sleep(100);
             }
 
-            Console.WriteLine(thread);
+            
+            Console.WriteLine(thread.Success ? thread.Result.ToString() : thread.InternalException.Message);
+
+            //thread.Start();
+
             Console.ReadKey();
 
 

@@ -19,6 +19,7 @@ namespace CBS._011
         private readonly Func<T> _threadStart;
         private T _result;
         private bool? _isCompleted;
+        public Exception InternalException { get; private set; }
 
         public bool IsCompleted
         {
@@ -37,11 +38,12 @@ namespace CBS._011
 
         public void Start()
         {
-            _thread.Start();
+            _thread.Start();            
         }
 
         private void ThreadStart()
         {
+            InternalException = null;
             IsCompleted = false;
             Success = false;
             try
@@ -49,10 +51,10 @@ namespace CBS._011
                 Result = _threadStart();
                 Success = true;
             }
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine($"Error: {ex.Message}");
-            //}
+            catch (Exception ex)
+            {                
+                InternalException = ex;
+            }
             finally
             {
                 IsCompleted = true;
